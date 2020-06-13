@@ -11,8 +11,9 @@ namespace JSON_Tool
     {
         static void Main(string[] args)
         {
-            var mine = JsonSerializer.Serialize('\'');
-            var original = JsonConvert.SerializeObject('\'');
+            List<int> list = new List<int>() { 1, 2, 3, 4, 5 };
+            var mine = JsonSerializer<int>.Serialize(list);
+            var original = JsonConvert.SerializeObject(list);
             ;
         }
     }

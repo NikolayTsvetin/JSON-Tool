@@ -6,14 +6,31 @@ using System.Threading.Tasks;
 
 namespace JSON_Tool
 {
-    public static class JsonSerializer
+    public static class JsonSerializer<T>
     {
-        public static string Serialize(char input)
+        public static string Serialize(object input)
         {
-            return Serialize(input.ToString());
+            string inputType = input.GetType().Name;
+            string result = String.Empty;
+
+            if (inputType != typeof(object).Name)
+            {
+                result = SerializeFactory(input);
+            }
+            else
+            {
+                // ...
+            }
+
+            return result;
         }
 
-        public static string Serialize(string input)
+        private static string SerializeChar(char input)
+        {
+            return SerializeString(input.ToString());
+        }
+
+        private static string SerializeString(string input)
         {
             input = ReplaceSpecialSymbols(input);
 
@@ -30,11 +47,45 @@ namespace JSON_Tool
             return stringBuilder.ToString();
         }
 
-        public static string Serialize(object input)
+        private static string SerializeBool(bool input)
         {
-            return "TODO";
+            return input ? "true" : "false";
         }
 
+        private static string SerializeInt(int input)
+        {
+            return input.ToString();
+        }
+
+        private static string SerializeDouble(double input)
+        {
+            return input.ToString().Replace(',', '.');
+        }
+
+        private static string SerializeDecimal(decimal input)
+        {
+            return input.ToString().Replace(',', '.');
+        }
+
+        private static string SerializeIEnumberable(IEnumerable<T> input)
+        {
+            StringBuilder result = new StringBuilder();
+            result.Append("[");
+
+            foreach (var item in input)
+            {
+                result.Append(SerializeFactory(item) + ",");
+            }
+
+            string toReturn = result.ToString().TrimEnd(',');
+            toReturn += ']';
+
+            return toReturn;
+        }
+
+        // Overloads for all other types of numbers...
+
+        // Helpers
         private static string ReplaceSpecialSymbols(string input)
         {
             input = input.Replace("\\", @"\\");
@@ -48,6 +99,47 @@ namespace JSON_Tool
             input = input.Replace("\"", @"\" + "\"");
 
             return input;
+        }
+
+        private static string SerializeFactory(object input)
+        {
+            string inputType = input.GetType().Name;
+            string result = String.Empty;
+
+            if (input is IEnumerable<T>)
+            {
+                result = SerializeIEnumberable((IEnumerable<T>)input);
+            }
+            else if (inputType == typeof(Int32).Name)
+            {
+                result = SerializeInt((int)input);
+            }
+            else if (inputType == typeof(decimal).Name)
+            {
+                result = SerializeDecimal((decimal)input);
+            }
+            else if (inputType == typeof(double).Name)
+            {
+                result = SerializeDouble((double)input);
+            }
+            else if (inputType == typeof(char).Name)
+            {
+                result = SerializeChar((char)input);
+            }
+            else if (inputType == typeof(bool).Name)
+            {
+                result = SerializeBool((bool)input);
+            }
+            else if (inputType == typeof(string).Name)
+            {
+                result = SerializeString((string)input);
+            }
+            else
+            {
+                // hmm?
+            }
+
+            return result;
         }
     }
 }
