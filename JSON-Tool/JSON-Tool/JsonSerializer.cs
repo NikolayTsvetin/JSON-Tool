@@ -105,10 +105,30 @@ namespace JSON_Tool
         {
             string inputType = input.GetType().Name;
             string result = String.Empty;
+            // Check if the input is some kind of collection i.e. List of lists etc...
+            bool isICollection = input.GetType().GetInterface("ICollection") != null ? true : false;
 
-            if (input is IEnumerable<T>)
+            if (isICollection)
             {
-                result = SerializeIEnumberable((IEnumerable<T>)input);
+                // Cast it to iterate over the collection
+                IEnumerable<object> enumerable = (IEnumerable<object>)input;
+
+                if (enumerable.Count() > 1)
+                {
+                    result += '[';
+                }
+
+                foreach (var item in enumerable)
+                {
+                    result += SerializeIEnumberable((IEnumerable<T>)item);
+                    result += ',';
+                }
+
+                if (enumerable.Count() > 1)
+                {
+                    result = result.TrimEnd(',');
+                    result += ']';
+                }
             }
             else if (inputType == typeof(Int32).Name)
             {

@@ -12,8 +12,15 @@ namespace JSON_Tool
         static void Main(string[] args)
         {
             List<int> list = new List<int>() { 1, 2, 3, 4, 5 };
-            var mine = JsonSerializer<int>.Serialize(list);
-            var original = JsonConvert.SerializeObject(list);
+            object obj = new { x = 5, y = 6 };
+            List<List<string>> nested = new List<List<string>>()
+            {
+                new List<string>() {"Helo", "halo" },
+                new List<string>() {"koi dali poznavam" }
+            };
+
+            var mine = JsonSerializer<string>.Serialize(nested);
+            var original = JsonConvert.SerializeObject(nested);
             ;
         }
     }
