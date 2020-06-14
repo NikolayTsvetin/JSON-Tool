@@ -156,7 +156,27 @@ namespace JSON_Tool
             }
             else
             {
-                // hmm?
+                // Everything here should be object - anonymous object or custom class.
+                var props = input.GetType().GetProperties();
+
+                if (props.Length > 0)
+                {
+                    result += '{';
+                }
+
+                foreach (var prop in props)
+                {
+                    result += SerializeString(prop.Name);
+                    result += ':';
+                    result += Serialize(prop.GetValue(input));
+                    result += ',';
+                }
+
+                if (props.Length > 0)
+                {
+                    result = props.Length > 1 ? result.TrimEnd(',') : result;
+                    result += '}';
+                }
             }
 
             return result;

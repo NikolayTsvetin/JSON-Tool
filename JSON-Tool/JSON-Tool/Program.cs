@@ -18,10 +18,24 @@ namespace JSON_Tool
                 new List<string>() {"Helo", "halo" },
                 new List<string>() {"koi dali poznavam" }
             };
+            Person p = new Person(22, "Nikolay");
 
-            var mine = JsonSerializer<string>.Serialize(nested);
-            var original = JsonConvert.SerializeObject(nested);
+            var mine = JsonSerializer<string>.Serialize(p);
+            var original = JsonConvert.SerializeObject(p);
             ;
+        }
+    }
+
+    public class Person
+    {
+        public int Age { get; set; }
+        public string Name { get; set; }
+        //public string Secret { get; set; }
+
+        public Person(int age, string name)
+        {
+            Age = age;
+            Name = name;
         }
     }
 }
