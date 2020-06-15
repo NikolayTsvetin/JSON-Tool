@@ -105,10 +105,8 @@ namespace JSON_Tool
         {
             string inputType = input.GetType().Name;
             string result = String.Empty;
-            // Check if the input is some kind of collection i.e. List of lists etc...
-            bool isICollection = input.GetType().GetInterface("ICollection") != null ? true : false;
 
-            if (isICollection)
+            if (input is IEnumerable<object>)
             {
                 // Cast it to iterate over the collection
                 IEnumerable<object> enumerable = (IEnumerable<object>)input;
