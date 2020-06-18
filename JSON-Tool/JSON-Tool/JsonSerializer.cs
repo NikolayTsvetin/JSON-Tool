@@ -14,13 +14,75 @@ namespace JSON_Tool
             string inputType = input.GetType().Name;
             string result = String.Empty;
 
-            if (inputType != typeof(object).Name)
+            if (inputType == typeof(Int32).Name)
             {
-                result = SerializeFactory(input);
+                result = SerializeInt((int)input);
+            }
+            else if (inputType == typeof(decimal).Name)
+            {
+                result = SerializeDecimal((decimal)input);
+            }
+            else if (inputType == typeof(double).Name)
+            {
+                result = SerializeDouble((double)input);
+            }
+            else if (inputType == typeof(char).Name)
+            {
+                result = SerializeChar((char)input);
+            }
+            else if (inputType == typeof(bool).Name)
+            {
+                result = SerializeBool((bool)input);
+            }
+            else if (inputType == typeof(string).Name)
+            {
+                result = SerializeString((string)input);
+            }
+            else if (input is IEnumerable)
+            {
+                // Cast it to iterate over the collection
+                IEnumerable enumerable = (IEnumerable)input;
+
+                if (enumerable.Count() >= 1)
+                {
+                    result += '[';
+                }
+
+                foreach (var item in enumerable)
+                {
+                    result += Serialize(item);
+                    result += ',';
+                }
+
+                if (enumerable.Count() >= 1)
+                {
+                    result = result.TrimEnd(',');
+                    result += ']';
+                }
             }
             else
             {
-                // ...
+                // Everything here should be object - anonymous object or custom class.
+                var props = input.GetType().GetProperties();
+
+                if (props.Length > 0)
+                {
+                    result += '{';
+                }
+
+                foreach (var prop in props)
+                {
+                    result += SerializeString(prop.Name);
+                    result += ':';
+                    result += Serialize(prop.GetValue(input));
+                    result += ',';
+                }
+
+                if (props.Length > 0)
+                {
+                    result = props.Length >= 1 ? result.TrimEnd(',') : result;
+                    result += '}';
+                }
             }
 
             return result;
@@ -75,7 +137,7 @@ namespace JSON_Tool
 
             foreach (var item in input)
             {
-                result.Append(SerializeFactory(item) + ",");
+                result.Append(Serialize(item) + ",");
             }
 
             string toReturn = result.ToString().TrimEnd(',');
@@ -100,91 +162,6 @@ namespace JSON_Tool
             input = input.Replace("\"", @"\" + "\"");
 
             return input;
-        }
-
-        private static string SerializeFactory(object input)
-        {
-            string inputType = input.GetType().Name;
-            string result = String.Empty;
-
-            //if (input is IEnumerable)
-            //{
-                
-            //}
-            //else
-            if (inputType == typeof(Int32).Name)
-            {
-                result = SerializeInt((int)input);
-            }
-            else if (inputType == typeof(decimal).Name)
-            {
-                result = SerializeDecimal((decimal)input);
-            }
-            else if (inputType == typeof(double).Name)
-            {
-                result = SerializeDouble((double)input);
-            }
-            else if (inputType == typeof(char).Name)
-            {
-                result = SerializeChar((char)input);
-            }
-            else if (inputType == typeof(bool).Name)
-            {
-                result = SerializeBool((bool)input);
-            }
-            else if (inputType == typeof(string).Name)
-            {
-                result = SerializeString((string)input);
-            }
-            else if (input is IEnumerable)
-            {
-                // Cast it to iterate over the collection
-                IEnumerable enumerable = (IEnumerable)input;
-
-                if (enumerable.Count() >= 1)
-                {
-                    result += '[';
-                }
-
-                foreach (var item in enumerable)
-                {
-                    result += Serialize(item);
-                    //result += SerializeIEnumberable((IEnumerable)item);
-                    result += ',';
-                }
-
-                if (enumerable.Count() >= 1)
-                {
-                    result = result.TrimEnd(',');
-                    result += ']';
-                }
-            }
-            else
-            {
-                // Everything here should be object - anonymous object or custom class.
-                var props = input.GetType().GetProperties();
-
-                if (props.Length > 0)
-                {
-                    result += '{';
-                }
-
-                foreach (var prop in props)
-                {
-                    result += SerializeString(prop.Name);
-                    result += ':';
-                    result += Serialize(prop.GetValue(input));
-                    result += ',';
-                }
-
-                if (props.Length > 0)
-                {
-                    result = props.Length >= 1 ? result.TrimEnd(',') : result;
-                    result += '}';
-                }
-            }
-
-            return result;
         }
     }
 }
