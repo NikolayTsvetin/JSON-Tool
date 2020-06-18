@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace JSON_Tool
 {
-    public static class JsonSerializer<T>
+    public static class JsonSerializer
     {
         public static string Serialize(object input)
         {
@@ -67,7 +68,7 @@ namespace JSON_Tool
             return input.ToString().Replace(',', '.');
         }
 
-        private static string SerializeIEnumberable(IEnumerable<T> input)
+        private static string SerializeIEnumberable(IEnumerable input)
         {
             StringBuilder result = new StringBuilder();
             result.Append("[");
@@ -106,29 +107,12 @@ namespace JSON_Tool
             string inputType = input.GetType().Name;
             string result = String.Empty;
 
-            if (input is IEnumerable<object>)
-            {
-                // Cast it to iterate over the collection
-                IEnumerable<object> enumerable = (IEnumerable<object>)input;
-
-                if (enumerable.Count() > 1)
-                {
-                    result += '[';
-                }
-
-                foreach (var item in enumerable)
-                {
-                    result += SerializeIEnumberable((IEnumerable<T>)item);
-                    result += ',';
-                }
-
-                if (enumerable.Count() > 1)
-                {
-                    result = result.TrimEnd(',');
-                    result += ']';
-                }
-            }
-            else if (inputType == typeof(Int32).Name)
+            //if (input is IEnumerable)
+            //{
+                
+            //}
+            //else
+            if (inputType == typeof(Int32).Name)
             {
                 result = SerializeInt((int)input);
             }
@@ -152,6 +136,29 @@ namespace JSON_Tool
             {
                 result = SerializeString((string)input);
             }
+            else if (input is IEnumerable)
+            {
+                // Cast it to iterate over the collection
+                IEnumerable enumerable = (IEnumerable)input;
+
+                if (enumerable.Count() >= 1)
+                {
+                    result += '[';
+                }
+
+                foreach (var item in enumerable)
+                {
+                    result += Serialize(item);
+                    //result += SerializeIEnumberable((IEnumerable)item);
+                    result += ',';
+                }
+
+                if (enumerable.Count() >= 1)
+                {
+                    result = result.TrimEnd(',');
+                    result += ']';
+                }
+            }
             else
             {
                 // Everything here should be object - anonymous object or custom class.
@@ -172,7 +179,7 @@ namespace JSON_Tool
 
                 if (props.Length > 0)
                 {
-                    result = props.Length > 1 ? result.TrimEnd(',') : result;
+                    result = props.Length >= 1 ? result.TrimEnd(',') : result;
                     result += '}';
                 }
             }
