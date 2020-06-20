@@ -43,46 +43,11 @@ namespace JSON_Tool
                 // Cast it to iterate over the collection
                 IEnumerable enumerable = (IEnumerable)input;
 
-                if (enumerable.Count() >= 1)
-                {
-                    result += '[';
-                }
-
-                foreach (var item in enumerable)
-                {
-                    result += Serialize(item);
-                    result += ',';
-                }
-
-                if (enumerable.Count() >= 1)
-                {
-                    result = result.TrimEnd(',');
-                    result += ']';
-                }
+                result += SerializeIEnumberable(enumerable);
             }
             else
             {
-                // Everything here should be object - anonymous object or custom class.
-                var props = input.GetType().GetProperties();
-
-                if (props.Length > 0)
-                {
-                    result += '{';
-                }
-
-                foreach (var prop in props)
-                {
-                    result += SerializeString(prop.Name);
-                    result += ':';
-                    result += Serialize(prop.GetValue(input));
-                    result += ',';
-                }
-
-                if (props.Length > 0)
-                {
-                    result = props.Length >= 1 ? result.TrimEnd(',') : result;
-                    result += '}';
-                }
+                result += SerializeObject(input);
             }
 
             return result;
@@ -130,25 +95,61 @@ namespace JSON_Tool
             return input.ToString().Replace(',', '.');
         }
 
-        private static string SerializeIEnumberable(IEnumerable input)
+        private static string SerializeIEnumberable(IEnumerable enumerable)
         {
-            StringBuilder result = new StringBuilder();
-            result.Append("[");
+            string result = String.Empty;
 
-            foreach (var item in input)
+            if (enumerable.Count() >= 1)
             {
-                result.Append(Serialize(item) + ",");
+                result += '[';
             }
 
-            string toReturn = result.ToString().TrimEnd(',');
-            toReturn += ']';
+            foreach (var item in enumerable)
+            {
+                result += Serialize(item);
+                result += ',';
+            }
 
-            return toReturn;
+            if (enumerable.Count() >= 1)
+            {
+                result = result.TrimEnd(',');
+                result += ']';
+            }
+
+            return result;
+        }
+
+        private static string SerializeObject(object input)
+        {
+            // Everything here should be object - anonymous object or custom class.
+            var props = input.GetType().GetProperties();
+            string result = String.Empty;
+
+            if (props.Length > 0)
+            {
+                result += '{';
+            }
+
+            foreach (var prop in props)
+            {
+                result += SerializeString(prop.Name);
+                result += ':';
+                result += Serialize(prop.GetValue(input));
+                result += ',';
+            }
+
+            if (props.Length > 0)
+            {
+                result = props.Length >= 1 ? result.TrimEnd(',') : result;
+                result += '}';
+            }
+
+            return result;
         }
 
         // Overloads for all other types of numbers...
 
-        // Helpers
+            // Helpers
         private static string ReplaceSpecialSymbols(string input)
         {
             input = input.Replace("\\", @"\\");
