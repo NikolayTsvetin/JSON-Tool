@@ -18,13 +18,15 @@ namespace JSON_Tool
                 x = 5,
                 y = "asd"
             };
-            List<int> list = new List<int>() { 1, 2, 3, 4, 5 };
-            var test = JsonConvert.SerializeObject(obj);
+            List<object> list = new List<object>() { obj, obj};
+            var test = JsonConvert.SerializeObject(list);
 
             // to dictionary helper method???
             var original = JsonConvert.DeserializeObject(test);
             /*Dictionary<string, object>*/object mine = JsonParser<object>.Parse(test);
             ;
+            // extension to object...
+            var nz = JsonParser<object>.ToDictionary(mine);
         }
     }
 }

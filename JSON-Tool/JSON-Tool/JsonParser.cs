@@ -30,7 +30,6 @@ namespace JSON_Tool
             else
             {
                 return ParseFactory(input);
-                // TODO!!!!! Check complex json with nested objects etc. Should have another handling too!
             }
         }
 
@@ -64,12 +63,37 @@ namespace JSON_Tool
 
                 List<object> collection = new List<object>();
 
+                if (input[0] == '{' && input[input.Length - 1] == '}')
+                {
+                    StringBuilder currentObject = new StringBuilder();
+
+                    // Ugly way to handle IEnumerable<object>. Should be refactored.
+                    for (int i = 0; i < input.Length; i++)
+                    {
+                        // Corner case. Awful. Fix it.
+                        if (input[i] == ',' && input[i + 1] == '{' && input[i - 1] == '}')
+                        {
+                            continue;
+                        }
+
+                        currentObject.Append(input[i]);
+
+                        if (input[i] == '}')
+                        {
+                            collection.Add(Parse(currentObject.ToString()));
+                            currentObject = new StringBuilder();
+                        }
+                    }
+
+                    return collection;
+                }
+
                 foreach (var item in splitted)
                 {
                     collection.Add(Parse(item));
                 }
 
-                return /*new {*/ collection /*}*/;
+                return collection;
             }
             else
             {
@@ -82,8 +106,7 @@ namespace JSON_Tool
                 }
             }
 
-            // todo
-            return null;
+            throw new InvalidOperationException("Couldn't parse the provided input.");
         }
 
         // Helpers
@@ -108,6 +131,15 @@ namespace JSON_Tool
             input = input.Replace(@"\" + "\"", "\"");
 
             return input;
+        }
+
+        public static Dictionary<string, object> ToDictionary(object inputObject)
+        {
+            Dictionary<string, object> result = new Dictionary<string, object>();
+
+            // ToString() and handle the objects one by one.
+
+            return result;
         }
     }
 }
