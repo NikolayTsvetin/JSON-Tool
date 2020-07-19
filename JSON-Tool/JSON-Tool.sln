@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSON-Tool", "JSON-Tool\JSON-Tool.csproj", "{4F34D421-F69D-4FE9-8887-F1EDC4ADA73D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonSerializer.Tests", "JsonSerializer.Tests\JsonSerializer.Tests.csproj", "{7D04BEFE-323F-462F-9A89-E9393AF816E7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSON-Tool.Tests", "JsonSerializer.Tests\JSON-Tool.Tests.csproj", "{7D04BEFE-323F-462F-9A89-E9393AF816E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

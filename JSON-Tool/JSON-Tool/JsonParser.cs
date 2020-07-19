@@ -14,7 +14,9 @@ namespace JSON_Tool
 
             if (input[0] == '{' && input[input.Length - 1] == '}')
             {
-                string[] kvp = input.TrimStart('{').TrimEnd('}').Split(',');
+                // Remove the first and last char ('{' and '}')
+                string trimmed = input.Substring(1, input.Length - 2);
+                string[] kvp = trimmed.Split(',');
 
                 foreach (var kvpParsed in kvp)
                 {
@@ -33,6 +35,7 @@ namespace JSON_Tool
             }
         }
 
+        // Helpers
         private static object ParseFactory(string input)
         {
             bool boolResult = default(bool);
@@ -77,8 +80,10 @@ namespace JSON_Tool
                         }
 
                         currentObject.Append(input[i]);
+                        int opening = currentObject.ToString().Count(c => c == '{');
+                        int closing = currentObject.ToString().Count(c => c == '}');
 
-                        if (input[i] == '}')
+                        if (input[i] == '}' && opening == closing)
                         {
                             collection.Add(Parse(currentObject.ToString()));
                             currentObject = new StringBuilder();
@@ -109,7 +114,6 @@ namespace JSON_Tool
             throw new InvalidOperationException("Couldn't parse the provided input.");
         }
 
-        // Helpers
         private static string ParseString(string input)
         {
             input = input.Trim('"');
@@ -133,13 +137,9 @@ namespace JSON_Tool
             return input;
         }
 
-        public static Dictionary<string, object> ToDictionary(object inputObject)
+        private static List<string> SplitObjectByKeyValuePairs(string inputObject)
         {
-            Dictionary<string, object> result = new Dictionary<string, object>();
-
-            // ToString() and handle the objects one by one.
-
-            return result;
+            throw new NotImplementedException("todo");
         }
     }
 }
