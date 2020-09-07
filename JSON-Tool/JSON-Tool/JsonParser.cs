@@ -11,34 +11,9 @@ namespace JSON_Tool
     {
         public static object Parse(string input)
         {
-            Dictionary<string, object> result = new Dictionary<string, object>();
-
             if (input[0] == '{' && input[input.Length - 1] == '}')
             {
-                // Remove the first and last char ('{' and '}')
-                string trimmed = input.Substring(1, input.Length - 2);
-                List<string> kvp = SplitObjectByKeyValuePairs(trimmed);
-
-                foreach (var kvpParsed in kvp)
-                {
-                    if (isObject(kvpParsed))
-                    {
-                        List<string> extractedKeyAndValue = ExtractKeyAndValue(kvpParsed);
-                        var parsed = Parse(extractedKeyAndValue[1]);
-
-                        result.Add(ParseString(extractedKeyAndValue[0]), parsed);
-                    }
-                    else
-                    {
-                        string[] parsed = kvpParsed.Split(':');
-                        string key = ParseString(parsed[0]);
-                        object value = Parse(parsed[1]);
-
-                        result.Add(key, value);
-                    }
-                }
-
-                return result;
+                return ParseObject(input);
             }
             else
             {
@@ -55,7 +30,7 @@ namespace JSON_Tool
             return new List<string>() { key, value };
         }
 
-        private static bool isObject(string kvpParsed)
+        private static bool IsObject(string kvpParsed)
         {
             return kvpParsed.Split(':').Length > 2 ? true : false;
         }
@@ -145,6 +120,36 @@ namespace JSON_Tool
             input = ReplaceSpecialSymbols(input);
 
             return input;
+        }
+
+        private static object ParseObject(string input)
+        {
+            Dictionary<string, object> result = new Dictionary<string, object>();
+
+            // Remove the first and last char ('{' and '}')
+            string trimmed = input.Substring(1, input.Length - 2);
+            List<string> kvp = SplitObjectByKeyValuePairs(trimmed);
+
+            foreach (var kvpParsed in kvp)
+            {
+                if (IsObject(kvpParsed))
+                {
+                    List<string> extractedKeyAndValue = ExtractKeyAndValue(kvpParsed);
+                    var parsed = Parse(extractedKeyAndValue[1]);
+
+                    result.Add(ParseString(extractedKeyAndValue[0]), parsed);
+                }
+                else
+                {
+                    string[] parsed = kvpParsed.Split(':');
+                    string key = ParseString(parsed[0]);
+                    object value = Parse(parsed[1]);
+
+                    result.Add(key, value);
+                }
+            }
+
+            return result;
         }
 
         private static string ReplaceSpecialSymbols(string input)
