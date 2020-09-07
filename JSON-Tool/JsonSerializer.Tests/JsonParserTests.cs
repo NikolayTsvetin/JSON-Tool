@@ -92,17 +92,64 @@ namespace JsonSerializer.Tests
         [TestMethod]
         public void Should_Parse_Object()
         {
-            throw new NotImplementedException("TODO");
-            //// Arrange
-            //object rawInput = new { x = 5, y = "asd" };
-            //string input = JsonConvert.SerializeObject(rawInput);
-            //object expected = JsonConvert.DeserializeObject(input);
+            // Arrange
+            object rawInput = new { x = 5, y = "asd" };
+            string input = JsonConvert.SerializeObject(rawInput);
 
-            //// Act
-            //object result = JsonParser<object>.Parse(input);
-            //Dictionary<string, object> casted = (Dictionary<string, object>)result;
+            // Act
+            object result = JsonParser<object>.Parse(input);
+            Dictionary<string, object> casted = (Dictionary<string, object>)result;
+            
+            // Assert
+            Assert.AreEqual(5, casted["x"]);
+            Assert.AreEqual("asd", casted["y"]);
+        }
 
-            //// Assert
+        [TestMethod]
+        public void Should_Parse_Object_With_Nested_Object()
+        {
+            // Arrange
+            object rawInput = new { x = 5, y = "asd", test = new { a = 2, c = 10, b = "dsds" } };
+            string input = JsonConvert.SerializeObject(rawInput);
+
+            // Act
+            object result = JsonParser<object>.Parse(input);
+            Dictionary<string, object> casted = (Dictionary<string, object>)result;
+            Dictionary<string, object> inner = (Dictionary<string, object>)casted["test"];
+
+            // Assert
+            Assert.AreEqual(5, casted["x"]);
+            Assert.AreEqual("asd", casted["y"]);
+            Assert.AreEqual(2, inner["a"]);
+            Assert.AreEqual(10, inner["c"]);
+            Assert.AreEqual("dsds", inner["b"]);
+        }
+
+        [TestMethod]
+        public void Should_Parse_IEnumerable_Of_Objects()
+        {
+            // Arrange
+            object rawInput = new { x = 5, y = "asd", test = new { a = 2, c = 10, b = "dsds" } };
+            List<object> list = new List<object>() { rawInput, rawInput };
+            string input = JsonConvert.SerializeObject(list);
+
+            // Act
+            object result = JsonParser<object>.Parse(input);
+            IList<object> casted = (IList<object>)result;
+
+            // Assert
+            for (int i = 0; i < casted.Count; i++)
+            {
+                ;
+                Dictionary<string, object> wholeObject = (Dictionary<string, object>)casted[i];
+                Dictionary<string, object> inner = (Dictionary<string, object>)wholeObject["test"];
+
+                Assert.AreEqual(5, wholeObject["x"]);
+                Assert.AreEqual("asd", wholeObject["y"]);
+                Assert.AreEqual(2, inner["a"]);
+                Assert.AreEqual(10, inner["c"]);
+                Assert.AreEqual("dsds", inner["b"]);
+            }
         }
 
         [TestMethod]

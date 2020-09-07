@@ -12,6 +12,12 @@ namespace JSON_Tool
         static void Main(string[] args)
         {
             string str = "asd\n\"as\\d";
+            object simpleObj = new
+            {
+                z = 's',
+                x = 5,
+                y = "asd"
+            };
             object obj = new
             {
                 z = 's',
@@ -21,6 +27,9 @@ namespace JSON_Tool
             };
             List<object> list = new List<object>() { obj, obj};
             var test = JsonConvert.SerializeObject(list);
+
+            var onlyObj = JsonConvert.SerializeObject(obj);
+            var simple = JsonConvert.SerializeObject(simpleObj);
 
             var original = JsonConvert.DeserializeObject(test);
             /*Dictionary<string, object>*/object mine = JsonParser<object>.Parse(test);

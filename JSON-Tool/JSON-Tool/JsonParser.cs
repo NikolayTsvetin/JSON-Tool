@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace JSON_Tool
@@ -16,15 +17,25 @@ namespace JSON_Tool
             {
                 // Remove the first and last char ('{' and '}')
                 string trimmed = input.Substring(1, input.Length - 2);
-                string[] kvp = trimmed.Split(',');
+                List<string> kvp = SplitObjectByKeyValuePairs(trimmed);
 
                 foreach (var kvpParsed in kvp)
                 {
-                    string[] parsed = kvpParsed.Split(':');
-                    string key = ParseString(parsed[0]);
-                    object value = Parse(parsed[1]);
+                    if (isObject(kvpParsed))
+                    {
+                        List<string> extractedKeyAndValue = ExtractKeyAndValue(kvpParsed);
+                        var parsed = Parse(extractedKeyAndValue[1]);
 
-                    result.Add(key, value);
+                        result.Add(ParseString(extractedKeyAndValue[0]), parsed);
+                    }
+                    else
+                    {
+                        string[] parsed = kvpParsed.Split(':');
+                        string key = ParseString(parsed[0]);
+                        object value = Parse(parsed[1]);
+
+                        result.Add(key, value);
+                    }
                 }
 
                 return result;
@@ -33,6 +44,20 @@ namespace JSON_Tool
             {
                 return ParseFactory(input);
             }
+        }
+
+        private static List<string> ExtractKeyAndValue(string kvpParsed)
+        {
+            int indexOfSeparator = kvpParsed.IndexOf(':');
+            string key = kvpParsed.Substring(0, indexOfSeparator);
+            string value = kvpParsed.Substring(indexOfSeparator + 1);
+
+            return new List<string>() { key, value };
+        }
+
+        private static bool isObject(string kvpParsed)
+        {
+            return kvpParsed.Split(':').Length > 2 ? true : false;
         }
 
         // Helpers
@@ -139,7 +164,44 @@ namespace JSON_Tool
 
         private static List<string> SplitObjectByKeyValuePairs(string inputObject)
         {
-            throw new NotImplementedException("todo");
+            List<string> kvp = new List<string>();
+            StringBuilder sb = new StringBuilder();
+            bool isObject = false;
+            int openingBrackets = 0;
+            int closingBrackets = 0;
+
+            for (int i = 0; i < inputObject.Length; i++)
+            {
+                if (inputObject[i] == ',' && !isObject)
+                {
+                    kvp.Add(sb.ToString());
+                    sb = new StringBuilder();
+
+                    continue;
+                }
+
+                if (inputObject[i] == '{')
+                {
+                    openingBrackets++;
+                    isObject = true;
+                }
+
+                if (inputObject[i] == '}')
+                {
+                    closingBrackets++;
+
+                    if (openingBrackets == closingBrackets)
+                    {
+                        isObject = false;
+                    }
+                }
+
+                sb.Append(inputObject[i]);
+            }
+
+            kvp.Add(sb.ToString());
+
+            return kvp;
         }
     }
 }
