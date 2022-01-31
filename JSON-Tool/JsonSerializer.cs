@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace JSON_Tool
 {
@@ -149,7 +145,7 @@ namespace JSON_Tool
 
         // Overloads for all other types of numbers...
 
-            // Helpers
+        // Helpers
         private static string ReplaceSpecialSymbols(string input)
         {
             input = input.Replace("\\", @"\\");

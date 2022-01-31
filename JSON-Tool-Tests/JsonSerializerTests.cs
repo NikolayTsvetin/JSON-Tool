@@ -1,10 +1,9 @@
-﻿using System;
-using JSON_Tool;
-using Newtonsoft.Json;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using JSON_Tool;
 using System.Collections.Generic;
 
-namespace JsonSerializer.Tests
+namespace JSON_Tool_Tests
 {
     [TestClass]
     public class JsonSerializerTests

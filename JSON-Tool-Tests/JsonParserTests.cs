@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using JSON_Tool;
 using Newtonsoft.Json;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 
-namespace JsonSerializer.Tests
+namespace JSON_Tool_Tests
 {
     [TestClass]
     public class JsonParserTests
@@ -99,7 +98,7 @@ namespace JsonSerializer.Tests
             // Act
             object result = JsonParser<object>.Parse(input);
             Dictionary<string, object> casted = (Dictionary<string, object>)result;
-            
+
             // Assert
             Assert.AreEqual(5, casted["x"]);
             Assert.AreEqual("asd", casted["y"]);
